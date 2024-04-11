@@ -13,6 +13,7 @@ final class TrackerViewController: UIViewController {
         let datePicker = UIDatePicker()
         datePicker.datePickerMode = .date
         datePicker.preferredDatePickerStyle = .compact
+        datePicker.addTarget(self, action: #selector(datePickerValueChanged(_:)), for: .valueChanged)
         return datePicker
     }()
     
@@ -27,6 +28,12 @@ final class TrackerViewController: UIViewController {
         emptyView.translatesAutoresizingMaskIntoConstraints = false
         return emptyView
     }()
+    
+//    private lazy var collectionView: UICollectionView = {
+//        let collectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewLayout())
+//        collectionView.register(Tracker, forCellWithReuseIdentifier: <#T##String#>)
+//        
+//    }
     
 //    var trackers: [Tracker] {
 //        didSet {
@@ -67,4 +74,12 @@ final class TrackerViewController: UIViewController {
     }
     
     @objc private func didTapAddTarget() {}
+    
+    @objc func datePickerValueChanged(_ sender: UIDatePicker) {
+        let selectedDate = sender.date
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "dd.MM.yyyy" // Формат даты
+        let formattedDate = dateFormatter.string(from: selectedDate)
+        print("Выбранная дата: \(formattedDate)")
+    }
 }
