@@ -111,13 +111,4 @@ enum Resources {
     "🙂", "😻", "🌺", "🐶", "❤️", "😱", "😇", "😡", "🥶", "🤔", "🙌", "🍔", "🥦", "🏓", "🥇", "🎸", "🏝️", "😪"
   ]
   static let textFieldLimit = 38
-
-  // MARK: - Default date formatter
-  // static let shiftTimeZone = 60 * 60 * 3
-  static let dateFormat = "dd.MM.YYYY"
-  static let dateFormatter: DateFormatter = {
-    let dateFormatter = DateFormatter()
-    dateFormatter.dateFormat = Resources.dateFormat
-    return dateFormatter
-  }()
 }

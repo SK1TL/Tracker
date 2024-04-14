@@ -96,7 +96,7 @@ final class NewTrackerViewController: UIViewController {
     // MARK: - Private methods to configure Stack section
     private func configureStackView() {
         addStackViewSubviews()
-        configureStackView()
+        configureStackViewConstraints()
     }
     
     private func addStackViewSubviews() {
@@ -105,7 +105,7 @@ final class NewTrackerViewController: UIViewController {
         stackView.addSubview(newHabitButton)
     }
     
-    private func configureStackViewCOnstraints() {
+    private func configureStackViewConstraints() {
         NSLayoutConstraint.activate([
             stackView.centerXAnchor.constraint(equalTo: safeArea.centerXAnchor),
             stackView.centerYAnchor.constraint(equalTo: safeArea.centerYAnchor),
@@ -127,8 +127,8 @@ final class NewTrackerViewController: UIViewController {
     }
 }
 
-extension NewTrackerViewController: CreateTrackerViewControllerDelegate {
-  func createTrackerViewController(_ viewController: CreateTrackerViewController, didFilledTracker tracker: Tracker, for categoryIndex: Int) {
-    delegate?.newTrackerViewController(self, didFilledTracker: tracker, for: categoryIndex)
-  }
-}
+//extension NewTrackerViewController: CreateTrackerViewControllerDelegate {
+//  func createTrackerViewController(_ viewController: CreateTrackerViewController, didFilledTracker tracker: Tracker, for categoryIndex: Int) {
+//    delegate?.newTrackerViewController(self, didFilledTracker: tracker, for: categoryIndex)
+//  }
+//}
