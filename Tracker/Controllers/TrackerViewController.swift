@@ -79,6 +79,7 @@ final class TrackerViewController: UIViewController {
         let selectedDate = sender.date
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "dd.MM.yyyy" // Формат даты
+        dateFormatter.locale = Locale(identifier: "ru_RU")
         let formattedDate = dateFormatter.string(from: selectedDate)
         print("Выбранная дата: \(formattedDate)")
     }

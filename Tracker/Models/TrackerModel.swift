@@ -12,7 +12,7 @@ struct Tracker: Hashable {
     let title: String
     let emoji: Int
     let color: Int
-    let plan: [Bool]
+    let schedule: [Bool]
 }
 
 struct TrackerCategory: Hashable {

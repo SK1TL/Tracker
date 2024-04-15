@@ -75,7 +75,7 @@ final class NewTrackerViewController: UIViewController {
         configureStackView()
     }
     
-    // MARK: - Private methods to configure Title section
+    // MARK: - Configure Title section
     private func configureTitleView() {
         addTitleSubviews()
         configureTitleConstraints()
@@ -93,7 +93,7 @@ final class NewTrackerViewController: UIViewController {
         ])
     }
     
-    // MARK: - Private methods to configure Stack section
+    // MARK: - Configure Stack section
     private func configureStackView() {
         addStackViewSubviews()
         configureStackViewConstraints()
@@ -115,20 +115,20 @@ final class NewTrackerViewController: UIViewController {
     }
     
     @objc func newHabitButtonClicked() {
-//        let nextController = CreateTrackerViewController(isHabit: true)
-//        nextController.delegate = self
-//        present(nextController, animated: true)
+        let createTrackerVC = CreateTrackerViewController(isHabit: true)
+        createTrackerVC.delegate = self
+        present(createTrackerVC, animated: true)
     }
     
     @objc func newEventButtonClicked() {
-//        let nextController = CreateTrackerViewController(isHabit: false)
-//        nextController.delegate = self
-//        present(nextController, animated: true)
+        let createTrackerVC = CreateTrackerViewController(isHabit: false)
+        createTrackerVC.delegate = self
+        present(createTrackerVC, animated: true)
     }
 }
 
-//extension NewTrackerViewController: CreateTrackerViewControllerDelegate {
-//  func createTrackerViewController(_ viewController: CreateTrackerViewController, didFilledTracker tracker: Tracker, for categoryIndex: Int) {
-//    delegate?.newTrackerViewController(self, didFilledTracker: tracker, for: categoryIndex)
-//  }
-//}
+extension NewTrackerViewController: CreateTrackerViewControllerDelegate {
+  func createTrackerViewController(_ viewController: CreateTrackerViewController, didFilledTracker tracker: Tracker, for categoryIndex: Int) {
+    delegate?.newTrackerViewController(self, didFilledTracker: tracker, for: categoryIndex)
+  }
+}
