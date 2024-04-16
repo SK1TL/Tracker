@@ -39,8 +39,9 @@ final class NewTrackerViewController: UIViewController {
         newHabitButton.backgroundColor = .YPBlack
         newHabitButton.setTitle(Resources.Labels.habit, for: .normal)
         newHabitButton.addTarget(self, action: #selector(newHabitButtonClicked), for: .touchUpInside)
+        newHabitButton.layer.cornerRadius = Resources.Dimensions.cornerRadius
+        newHabitButton.layer.masksToBounds = true
         newHabitButton.translatesAutoresizingMaskIntoConstraints = false
-        stackView.addArrangedSubview(newHabitButton)
         return newHabitButton
     }()
     
@@ -50,8 +51,9 @@ final class NewTrackerViewController: UIViewController {
         newEventButton.backgroundColor = .YPBlack
         newEventButton.setTitle(Resources.Labels.event, for: .normal)
         newEventButton.addTarget(self, action: #selector(newEventButtonClicked), for: .touchUpInside)
+        newEventButton.layer.cornerRadius = Resources.Dimensions.cornerRadius
+        newEventButton.layer.masksToBounds = true
         newEventButton.translatesAutoresizingMaskIntoConstraints = false
-        stackView.addArrangedSubview(newEventButton)
         return newEventButton
     }()
     
@@ -87,8 +89,8 @@ final class NewTrackerViewController: UIViewController {
     
     private func configureTitleConstraints() {
         NSLayoutConstraint.activate([
-            titleLabel.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor),
-            titleLabel.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor),
+            titleLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            titleLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             titleLabel.topAnchor.constraint(equalTo: safeArea.topAnchor, constant: Resources.Layouts.vSpacingTitle)
         ])
     }
@@ -100,15 +102,15 @@ final class NewTrackerViewController: UIViewController {
     }
     
     private func addStackViewSubviews() {
-        stackView.addSubview(stackView)
-        stackView.addSubview(newEventButton)
-        stackView.addSubview(newHabitButton)
+        view.addSubview(stackView)
+        stackView.addArrangedSubview(newHabitButton)
+        stackView.addArrangedSubview(newEventButton)
     }
     
     private func configureStackViewConstraints() {
         NSLayoutConstraint.activate([
-            stackView.centerXAnchor.constraint(equalTo: safeArea.centerXAnchor),
-            stackView.centerYAnchor.constraint(equalTo: safeArea.centerYAnchor),
+            stackView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            stackView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
             stackView.heightAnchor.constraint(equalToConstant: stackHeight),
             stackView.widthAnchor.constraint(equalToConstant: stackWidth)
         ])
@@ -128,7 +130,7 @@ final class NewTrackerViewController: UIViewController {
 }
 
 extension NewTrackerViewController: CreateTrackerViewControllerDelegate {
-  func createTrackerViewController(_ viewController: CreateTrackerViewController, didFilledTracker tracker: Tracker, for categoryIndex: Int) {
-    delegate?.newTrackerViewController(self, didFilledTracker: tracker, for: categoryIndex)
-  }
+    func createTrackerViewController(_ viewController: CreateTrackerViewController, didFilledTracker tracker: Tracker, for categoryIndex: Int) {
+        delegate?.newTrackerViewController(self, didFilledTracker: tracker, for: categoryIndex)
+    }
 }

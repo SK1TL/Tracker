@@ -9,7 +9,7 @@ import Foundation
 import UIKit
 
 protocol ScheduleViewControllerDelegate: AnyObject {
-    func scheduleViewController(_ viewController: ScheduleViewController, didSelectSchedule schedule: [Bool])
+    func didSelectSchedule(_ schedule: [WeekDay])
 }
 
 final class ScheduleViewController: UIViewController {
@@ -30,21 +30,6 @@ final class ScheduleViewController: UIViewController {
         return titleLabel
     }()
     
-    private lazy var optionsView: UIView = {
-        let optionsView = UIView()
-        optionsView.backgroundColor = .ypBackground
-        optionsView.layer.cornerRadius = Resources.Dimensions.cornerRadius
-        optionsView.layer.masksToBounds = true
-        optionsView.translatesAutoresizingMaskIntoConstraints = false
-        optionsView.frame = CGRect(
-            x: 0,
-            y: 0,
-            width: optionsViewWidth,
-            height: optionsViewHeight
-        )
-        return optionsView
-    }()
-    
     private lazy var doneButton: UIButton = {
         let doneButton = UIButton()
         doneButton.setTitle(Resources.Labels.done, for: .normal)
@@ -58,6 +43,20 @@ final class ScheduleViewController: UIViewController {
         return doneButton
     }()
     
+    private lazy var scheduleTableView: UITableView = {
+        let tableView = UITableView()
+        tableView.translatesAutoresizingMaskIntoConstraints = false
+        tableView.register(ScheduleCell.self, forCellReuseIdentifier: ScheduleCell.reuseIdentifier)
+        tableView.separatorInset = UIEdgeInsets(top: .zero, left: 16, bottom: .zero, right: 16)
+        tableView.separatorColor = .YPGray
+        tableView.layer.cornerRadius = 16
+        tableView.layer.masksToBounds = true
+        tableView.delegate = self
+        tableView.dataSource = self
+        tableView.isScrollEnabled = false
+        return tableView
+    }()
+    
     private lazy var safeArea: UILayoutGuide = {
         view.safeAreaLayoutGuide
     }()
@@ -66,24 +65,8 @@ final class ScheduleViewController: UIViewController {
         view.frame.width - 2 * Resources.Layouts.leadingButton
     }()
     
-    private lazy var optionsViewWidth: CGFloat = {
-        view.frame.width - 2 * Resources.Layouts.leadingElement
-    }()
-    
-    private lazy var optionsViewHeight: CGFloat = {
-        return Resources.Dimensions.fieldHeight * CGFloat(daysOfWeek)
-    }()
-    
     private lazy var leadSpacing: CGFloat = {
         Resources.Layouts.leadingElement
-    }()
-    
-    private lazy var switchWidth: CGFloat = {
-        switchHeight * 2
-    }()
-    
-    private lazy var switchHeight: CGFloat = {
-        return Resources.Dimensions.fieldHeight / 3
     }()
     
     private lazy var formIsFulfilled = false {
@@ -92,27 +75,9 @@ final class ScheduleViewController: UIViewController {
         }
     }
     
-    private var schedule: [Bool]
-    private let daysOfWeek = 7
-    private let weekDays = [
-        "Понедельник",
-        "Вторник",
-        "Среда",
-        "Четверг",
-        "Пятница",
-        "Суббота",
-        "Воскресенье"
-    ]
+    private lazy var selectedWeekDays: [Bool] = [Bool](repeating: false, count: weekDays.count)
     
-    // MARK: - Inits
-    init(schedule: [Bool]) {
-        self.schedule = schedule
-        super.init(nibName: nil, bundle: nil)
-    }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
+    private let weekDays = WeekDay.allCases
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -122,7 +87,7 @@ final class ScheduleViewController: UIViewController {
     
     private func configureUI() {
         configureTitleLabel()
-        configureOptionsView()
+        configureTableView()
         configureDoneButton()
     }
     
@@ -145,78 +110,17 @@ final class ScheduleViewController: UIViewController {
         ])
     }
     
-    // MARK: - Configure Options section
-    
-    func configureOptionsSection() {
-        configureOptionsView()
-        addOptionViewSubviews()
-        makeOptionsSectionConstraints()
-        for day in 0..<daysOfWeek {
-            configureOptionsLabel(index: day)
-            configureOptionsSwitch(index: day)
-        }
-        let borderView = BorderView()
-        borderView.configure(
-            for: optionsView,
-            width: optionsViewWidth - Resources.Layouts.leadingElement * 2,
-            repeat: daysOfWeek - 1
-        )
-    }
-    
-    func addOptionViewSubviews() {
-        view.addSubview(optionsView)
-    }
-    
-    func configureOptionsView() {
-        optionsView.backgroundColor = .ypBackground
-        optionsView.layer.cornerRadius = Resources.Dimensions.cornerRadius
-        optionsView.layer.masksToBounds = true
-        optionsView.translatesAutoresizingMaskIntoConstraints = false
-        optionsView.frame = CGRect(
-            x: 0,
-            y: 0,
-            width: optionsViewWidth,
-            height: optionsViewHeight
-        )
-    }
-    
-    func configureOptionsLabel(index: Int) {
-        let label = UILabel()
-        label.textColor = .ypBlack
-        label.text = weekDays[index]
-        label.textAlignment = .natural
-        label.frame = CGRect(
-            x: leadSpacing,
-            y: Resources.Dimensions.fieldHeight * CGFloat(index),
-            width: optionsViewWidth,
-            height: Resources.Dimensions.fieldHeight
-        )
-        optionsView.addSubview(label)
-    }
-    
-    func configureOptionsSwitch(index: Int) {
-        let daySwitch = UISwitch()
-        daySwitch.isOn = schedule[index]
-        daySwitch.tag = index
-        daySwitch.thumbTintColor = .YPWhite
-        daySwitch.onTintColor = .YPBlue
-        daySwitch.addTarget(self, action: #selector(onSwitchChange(_:)), for: .touchUpInside)
-        daySwitch.frame = CGRect(
-            x: optionsViewWidth - leadSpacing - switchWidth,
-            y: Resources.Dimensions.fieldHeight * CGFloat(index) + switchHeight,
-            width: switchWidth,
-            height: switchHeight
-        )
-        optionsView.addSubview(daySwitch)
-    }
-    
-    func makeOptionsSectionConstraints() {
+    private func configureTableView() {
+        view.addSubview(scheduleTableView)
         NSLayoutConstraint.activate([
-            optionsView.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: Resources.Layouts.vSpacingElement),
-            optionsView.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor, constant: leadSpacing),
-            optionsView.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor, constant: -leadSpacing),
-            optionsView.heightAnchor.constraint(equalToConstant: optionsViewHeight)
+            scheduleTableView.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: Resources.Layouts.vSpacingElement),
+            scheduleTableView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: Resources.Layouts.leadingElement),
+            scheduleTableView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -Resources.Layouts.leadingElement),
+            scheduleTableView.heightAnchor.constraint(
+                equalToConstant: Resources.Dimensions.scheduleCellHeight * CGFloat(weekDays.count)
+            )
         ])
+        scheduleTableView.tableFooterView = UIView()
     }
     
     // MARK: - Configure Button section
@@ -229,12 +133,12 @@ final class ScheduleViewController: UIViewController {
     }
     
     func updateFormState() {
-        formIsFulfilled = !schedule.filter { $0 == true }.isEmpty
+        formIsFulfilled = !selectedWeekDays.filter { $0 }.isEmpty
     }
     
     func updateDoneButtonState() {
         doneButton.backgroundColor = formIsFulfilled ? .YPBlack : .YPGray
-        doneButton.isEnabled = formIsFulfilled ? true : false
+        doneButton.isEnabled = formIsFulfilled
     }
     
     private func addButtonSubviews() {
@@ -256,11 +160,42 @@ final class ScheduleViewController: UIViewController {
     //MARK: - Action buttons configure
     
     @objc func doneButtonClicked() {
-        delegate?.scheduleViewController(self, didSelectSchedule: schedule)
+        var result: [WeekDay] = []
+        for (index, val) in selectedWeekDays.enumerated() where val == true {
+            result.append(weekDays[index])
+        }
+        delegate?.didSelectSchedule(result)
+    }
+}
+
+extension ScheduleViewController: UITableViewDataSource {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        weekDays.count
     }
     
-    @objc func onSwitchChange(_ sender: UISwitch) {
-        schedule[sender.tag] = sender.isOn
-        updateFormState()
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        guard 
+            let cell = tableView.dequeueReusableCell(
+                withIdentifier: ScheduleCell.reuseIdentifier,
+                for: indexPath
+            ) as? ScheduleCell
+        else {
+            return UITableViewCell()
+        }
+        cell.configureCell(title: weekDays[indexPath.row].name, isOn: selectedWeekDays[indexPath.row])
+        cell.onSwitchCallback = { [weak self] in
+            guard let self else {
+                return
+            }
+            selectedWeekDays[indexPath.row] = $0
+            updateFormState()
+        }
+        return cell
+    }
+}
+
+extension ScheduleViewController: UITableViewDelegate {
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        Resources.Dimensions.scheduleCellHeight
     }
 }

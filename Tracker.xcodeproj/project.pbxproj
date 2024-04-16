@@ -12,6 +12,9 @@
 		850C387A2BCBFB5F00DC9541 /* Date+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 850C38792BCBFB5F00DC9541 /* Date+Extension.swift */; };
 		850C387C2BCBFE5B00DC9541 /* TextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 850C387B2BCBFE5B00DC9541 /* TextField.swift */; };
 		850C387E2BCC509300DC9541 /* OptionButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 850C387D2BCC509300DC9541 /* OptionButton.swift */; };
+		850C38802BCDC5DE00DC9541 /* TrackerHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 850C387F2BCDC5DE00DC9541 /* TrackerHeader.swift */; };
+		850C38832BCEF74300DC9541 /* WeekDay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 850C38822BCEF74300DC9541 /* WeekDay.swift */; };
+		850C38852BCEFC3400DC9541 /* ScheduleCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 850C38842BCEFC3400DC9541 /* ScheduleCell.swift */; };
 		85B7F47C2BBF2D0E0023D1A2 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85B7F47B2BBF2D0E0023D1A2 /* AppDelegate.swift */; };
 		85B7F47E2BBF2D0E0023D1A2 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85B7F47D2BBF2D0E0023D1A2 /* SceneDelegate.swift */; };
 		85B7F4802BBF2D0E0023D1A2 /* TabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85B7F47F2BBF2D0E0023D1A2 /* TabBarController.swift */; };
@@ -37,6 +40,9 @@
 		850C38792BCBFB5F00DC9541 /* Date+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Date+Extension.swift"; sourceTree = "<group>"; };
 		850C387B2BCBFE5B00DC9541 /* TextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextField.swift; sourceTree = "<group>"; };
 		850C387D2BCC509300DC9541 /* OptionButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OptionButton.swift; sourceTree = "<group>"; };
+		850C387F2BCDC5DE00DC9541 /* TrackerHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackerHeader.swift; sourceTree = "<group>"; };
+		850C38822BCEF74300DC9541 /* WeekDay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeekDay.swift; sourceTree = "<group>"; };
+		850C38842BCEFC3400DC9541 /* ScheduleCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScheduleCell.swift; sourceTree = "<group>"; };
 		85B7F4782BBF2D0E0023D1A2 /* Tracker.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Tracker.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		85B7F47B2BBF2D0E0023D1A2 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		85B7F47D2BBF2D0E0023D1A2 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -77,6 +83,14 @@
 			path = Services;
 			sourceTree = "<group>";
 		};
+		850C38812BCEF73400DC9541 /* Enums */ = {
+			isa = PBXGroup;
+			children = (
+				850C38822BCEF74300DC9541 /* WeekDay.swift */,
+			);
+			path = Enums;
+			sourceTree = "<group>";
+		};
 		85B7F46F2BBF2D0E0023D1A2 = {
 			isa = PBXGroup;
 			children = (
@@ -96,6 +110,7 @@
 		85B7F47A2BBF2D0E0023D1A2 /* Tracker */ = {
 			isa = PBXGroup;
 			children = (
+				850C38812BCEF73400DC9541 /* Enums */,
 				850C38742BCBD5E600DC9541 /* Services */,
 				85B7F4CC2BC860410023D1A2 /* Views */,
 				85B7F4C92BC6B7AE0023D1A2 /* Controllers */,
@@ -148,6 +163,7 @@
 				85B7F4D12BC869910023D1A2 /* NewTrackerViewController.swift */,
 				85B7F4D32BC999DC0023D1A2 /* CreateTrackerViewController.swift */,
 				85B7F4D52BCA89880023D1A2 /* ScheduleViewController.swift */,
+				850C38842BCEFC3400DC9541 /* ScheduleCell.swift */,
 			);
 			path = Controllers;
 			sourceTree = "<group>";
@@ -159,6 +175,7 @@
 				85B7F4CD2BC860540023D1A2 /* TrackerCell.swift */,
 				85B7F4D72BCAB7CC0023D1A2 /* BorderView.swift */,
 				850C387D2BCC509300DC9541 /* OptionButton.swift */,
+				850C387F2BCDC5DE00DC9541 /* TrackerHeader.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -235,10 +252,12 @@
 			files = (
 				85B7F4862BBF2D0E0023D1A2 /* Tracker.xcdatamodeld in Sources */,
 				85B7F4802BBF2D0E0023D1A2 /* TabBarController.swift in Sources */,
+				850C38832BCEF74300DC9541 /* WeekDay.swift in Sources */,
 				85B7F4CE2BC860540023D1A2 /* TrackerCell.swift in Sources */,
 				850C38762BCBD5F800DC9541 /* TrackersFactory.swift in Sources */,
 				850C38782BCBF98200DC9541 /* UIViewController+Extension.swift in Sources */,
 				85B7F47C2BBF2D0E0023D1A2 /* AppDelegate.swift in Sources */,
+				850C38852BCEFC3400DC9541 /* ScheduleCell.swift in Sources */,
 				85B7F4962BC1BA680023D1A2 /* TrackerViewController.swift in Sources */,
 				85B7F4D62BCA89880023D1A2 /* ScheduleViewController.swift in Sources */,
 				85B7F47E2BBF2D0E0023D1A2 /* SceneDelegate.swift in Sources */,
@@ -253,6 +272,7 @@
 				85B7F4D82BCAB7CC0023D1A2 /* BorderView.swift in Sources */,
 				85B7F49A2BC307810023D1A2 /* StatisticViewController.swift in Sources */,
 				850C387A2BCBFB5F00DC9541 /* Date+Extension.swift in Sources */,
+				850C38802BCDC5DE00DC9541 /* TrackerHeader.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

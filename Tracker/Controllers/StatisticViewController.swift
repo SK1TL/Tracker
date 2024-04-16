@@ -18,7 +18,7 @@ final class StatisticViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        title = "Статистика"
+        title = Resources.Labels.statistic
         view.backgroundColor = .YPWhite
         
         addSubviews()
@@ -27,8 +27,8 @@ final class StatisticViewController: UIViewController {
         navigationController?.navigationBar.prefersLargeTitles = true
         navigationController?.navigationBar.tintColor = .YPBlack
         
-        guard let emptyImage = UIImage(named: "cryEmoji") else { return }
-        emptyView.configureView(image: emptyImage, text: "Анализировать пока нечего")
+        guard let emptyStatisticImage = Resources.Images.emptyStatistic else { return }
+        emptyView.configureView(image: emptyStatisticImage, text: Resources.Labels.emptyStatistic)
     }
     
     

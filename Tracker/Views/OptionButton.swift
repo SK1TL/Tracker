@@ -22,7 +22,7 @@ final class OptionButton: UIButton {
         let secondLabel = UILabel()
         secondLabel.numberOfLines = 1
         secondLabel.textAlignment = .natural
-        secondLabel.textColor = .YPBlack
+        secondLabel.textColor = .YPGray
         secondLabel.font = Resources.Fonts.textField
         secondLabel.isHidden = true
         return secondLabel

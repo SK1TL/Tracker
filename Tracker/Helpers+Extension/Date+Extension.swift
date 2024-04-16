@@ -8,17 +8,17 @@
 import UIKit
 
 extension Date {
-    func systemWeekend() -> Int {
-        let systemWeekday = Calendar.current.component(.weekday, from: self)
+    func weekDay() -> Int {
+        let systemWeekDay = Calendar.current.component(.weekday, from: self)
         if Calendar.current.firstWeekday == 1 {
-            switch systemWeekday {
+            switch systemWeekDay {
             case 2 ... 7:
-                return systemWeekday - 1
+                return systemWeekDay - 1
             default:
                 return 7
             }
         } else {
-            return systemWeekday
+            return systemWeekDay
         }
     }
 }

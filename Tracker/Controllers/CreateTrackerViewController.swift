@@ -37,15 +37,6 @@ final class CreateTrackerViewController: UIViewController {
     }()
     
     // MARK: - Variables for TextField section
-    private lazy var textFieldStackView: UIStackView = {
-        let textFieldStackView = UIStackView()
-        textFieldStackView.axis = .horizontal
-        textFieldStackView.distribution = .fillProportionally
-        textFieldStackView.spacing = .zero
-        textFieldStackView.translatesAutoresizingMaskIntoConstraints = false
-        return textFieldStackView
-    }()
-    
     private lazy var textField: TextField = {
         let textField = TextField()
         textField.backgroundColor = .ypBackground
@@ -65,7 +56,7 @@ final class CreateTrackerViewController: UIViewController {
         textFieldWarning.font = Resources.Fonts.textField
         textFieldWarning.textAlignment = .center
         textFieldWarning.textColor = .YPRed
-        textFieldWarning.isHidden = true
+        textFieldWarning.text = "Ограничение 38 символов"
         textFieldWarning.translatesAutoresizingMaskIntoConstraints = false
         textFieldWarning.frame = CGRect(
             x: 0,
@@ -94,6 +85,13 @@ final class CreateTrackerViewController: UIViewController {
         categoryButton.frame = CGRect(x: 0, y: 0, width: optionsViewWidth, height: Resources.Dimensions.fieldHeight)
         categoryButton.translatesAutoresizingMaskIntoConstraints = false
         return categoryButton
+    }()
+    
+    private lazy var dividerView: UIView = {
+        let rectangleView = UIView()
+        rectangleView.backgroundColor = .YPGray
+        rectangleView.translatesAutoresizingMaskIntoConstraints = false
+        return rectangleView
     }()
     
     private lazy var scheduleButton: OptionButton = {
@@ -149,58 +147,58 @@ final class CreateTrackerViewController: UIViewController {
     }()
     
     private lazy var buttonsStackViewWidth: CGFloat = {
-      view.frame.width - 2 * Resources.Layouts.leadingButton
+        view.frame.width - 2 * Resources.Layouts.leadingButton
     }()
-
+    
     private lazy var optionsViewWidth: CGFloat = {
-      view.frame.width - 2 * Resources.Layouts.leadingElement
+        view.frame.width - 2 * Resources.Layouts.leadingElement
     }()
-
+    
     private lazy var optionsViewHeight: CGFloat = {
-      return isHabit ? Resources.Dimensions.fieldHeight * 2 : Resources.Dimensions.fieldHeight
+        return isHabit ? Resources.Dimensions.fieldHeight * 2 : Resources.Dimensions.fieldHeight
     }()
-
+    
     private lazy var leadSpacing: CGFloat = {
-      Resources.Layouts.leadingElement
+        Resources.Layouts.leadingElement
     }()
     
     private var trackerNameIsFulfilled = false {
-      didSet {
-        updateFormState()
-      }
+        didSet {
+            updateFormState()
+        }
     }
-
+    
     private var categoryIsSelected = false {
-      didSet {
-        updateFormState()
-      }
+        didSet {
+            updateFormState()
+        }
     }
-
+    
     private var scheduleIsFulfilled = false {
-      didSet {
-        updateFormState()
-      }
+        didSet {
+            updateFormState()
+        }
     }
-
+    
     private var emojiIsSelected = true // dummy for now, add didSet after implementation emojis
     private var colorIsSelected = true // dummy for now, add didSet after implementation colours
-
+    
     private var formIsFulfilled = false {
-      didSet {
-        if formIsFulfilled {
-          updateCreateButtonState()
+        didSet {
+            if formIsFulfilled {
+                updateCreateButtonState()
+            }
         }
-      }
     }
     
     private let factory = TrackersFactory.shared
     private var selectedCategoryIndex = 0
     private var isHabit: Bool
-    private var schedule = [Bool](repeating: false, count: 7)
+    private var schedule = [WeekDay]()
     private var userInput = "" {
-      didSet {
-        trackerNameIsFulfilled = true
-      }
+        didSet {
+            trackerNameIsFulfilled = true
+        }
     }
     
     init(isHabit: Bool) {
@@ -216,8 +214,7 @@ final class CreateTrackerViewController: UIViewController {
         super.viewDidLoad()
         self.hideKeyboardWhenTappedAround()
         if !isHabit {
-          schedule = schedule.map { $0 || true }
-          scheduleIsFulfilled = true
+            scheduleIsFulfilled = true
         }
         view.backgroundColor = .YPWhite
         configureUI()
@@ -234,113 +231,109 @@ final class CreateTrackerViewController: UIViewController {
     
     // MARK: - Configure Title section
     private func configureTitleLabel() {
-        addTitleLabelSubviews()
-        makeTitleLabelConstraints()
-    }
-    
-    private func addTitleLabelSubviews() {
         view.addSubview(titleLabel)
+        makeTitleLabelConstraints()
     }
     
     private func makeTitleLabelConstraints() {
         NSLayoutConstraint.activate([
             titleLabel.topAnchor.constraint(equalTo: safeArea.topAnchor, constant: Resources.Layouts.vSpacingTitle),
-            titleLabel.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor),
-            titleLabel.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor)
+            titleLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            titleLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor)
         ])
     }
     
     // MARK: - Configure TextField section
     private func configureTextFieldSection() {
-        addTextFieldStackViewSubviews()
-        makeTextFieldStackViewConstraints()
-        addTextFieldArrangedSubviews()
+        view.addSubview(textField)
+        view.addSubview(textFieldWarning)
         makeTextFieldConstraints()
-        addTextFieldWarningArranfedSubviews()
         makeTextFieldWarningConstraints()
-    }
-    
-    private func addTextFieldStackViewSubviews() {
-        view.addSubview(textFieldStackView)
-    }
-    
-    private func makeTextFieldStackViewConstraints() {
-        NSLayoutConstraint.activate([
-            textFieldStackView.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor, constant: leadSpacing),
-            textFieldStackView.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor, constant: -leadSpacing),
-            textFieldStackView.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: Resources.Layouts.vSpacingElement)
-        ])
-    }
-    
-    private func addTextFieldArrangedSubviews() {
-        textFieldStackView.addArrangedSubview(textField)
     }
     
     private func makeTextFieldConstraints() {
         NSLayoutConstraint.activate([
-            textField.topAnchor.constraint(equalTo: textFieldStackView.topAnchor),
-            textField.leadingAnchor.constraint(equalTo: textFieldStackView.leadingAnchor),
-            textField.trailingAnchor.constraint(equalTo: textFieldStackView.trailingAnchor),
+            textField.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: Resources.Layouts.vSpacingElement),
+            textField.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: leadSpacing),
+            textField.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -leadSpacing),
             textField.heightAnchor.constraint(equalToConstant: Resources.Dimensions.fieldHeight)
         ])
     }
     
-    private func addTextFieldWarningArranfedSubviews() {
-        textFieldStackView.addArrangedSubview(textFieldWarning)
-    }
-    
     private func makeTextFieldWarningConstraints() {
         NSLayoutConstraint.activate([
-            textFieldWarning.topAnchor.constraint(equalTo: textField.bottomAnchor),
-            textFieldWarning.leadingAnchor.constraint(equalTo: textFieldStackView.leadingAnchor),
-            textFieldWarning.trailingAnchor.constraint(equalTo: textFieldStackView.trailingAnchor),
-            textFieldWarning.heightAnchor.constraint(equalToConstant: Resources.Dimensions.fieldHeight / 2)
-          ])
+            textFieldWarning.topAnchor.constraint(equalTo: textField.bottomAnchor, constant: 8),
+            textFieldWarning.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 45),
+            textFieldWarning.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -45)
+        ])
     }
     
     // MARK: - Configure Options section
     private func configureOptionsSection() {
-        addOptionViewSubviews()
-        makeOptionViewConstraints()
-        optionView.addSubview(categoryButton)
+        configureOptionView()
+        configureCategoryButton()
         if isHabit {
-            let borderView = BorderView()
-            borderView.configure(for: optionView, width: optionsViewWidth - Resources.Layouts.leadingElement * 2, repeat: 1)
-            optionView.addSubview(scheduleButton)
+            configureDividerView()
+            configureScheduleButton()
         }
     }
-    private func addOptionViewSubviews() {
-        view.addSubview(optionView)
-    }
     
-    private func makeOptionViewConstraints() {
+    private func configureOptionView() {
+        view.addSubview(optionView)
         NSLayoutConstraint.activate([
-            optionView.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor, constant: leadSpacing),
-            optionView.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor, constant: -leadSpacing),
+            optionView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: leadSpacing),
+            optionView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -leadSpacing),
             optionView.heightAnchor.constraint(equalToConstant: optionsViewHeight),
             optionView.topAnchor.constraint(
-                equalTo: textFieldStackView.bottomAnchor,
+                equalTo: textFieldWarning.bottomAnchor,
                 constant: Resources.Layouts.vSpacingElement
             )
         ])
     }
     
+    private func configureCategoryButton() {
+        optionView.addSubview(categoryButton)
+        NSLayoutConstraint.activate([
+            categoryButton.topAnchor.constraint(equalTo: optionView.topAnchor),
+            categoryButton.leadingAnchor.constraint(equalTo: optionView.leadingAnchor),
+            categoryButton.trailingAnchor.constraint(equalTo: optionView.trailingAnchor),
+            categoryButton.heightAnchor.constraint(equalToConstant: 75)
+        ])
+    }
+    
+    private func configureDividerView() {
+        optionView.addSubview(dividerView)
+        NSLayoutConstraint.activate([
+            dividerView.topAnchor.constraint(equalTo: categoryButton.bottomAnchor),
+            dividerView.heightAnchor.constraint(equalToConstant: 0.5),
+            dividerView.leadingAnchor.constraint(equalTo: optionView.leadingAnchor, constant: Resources.Layouts.leadingElement),
+            dividerView.trailingAnchor.constraint(equalTo: optionView.trailingAnchor, constant: -Resources.Layouts.leadingElement)
+        ])
+    }
+    
+    private func configureScheduleButton() {
+        optionView.addSubview(scheduleButton)
+        NSLayoutConstraint.activate([
+            scheduleButton.topAnchor.constraint(equalTo: dividerView.bottomAnchor),
+            scheduleButton.leadingAnchor.constraint(equalTo: optionView.leadingAnchor),
+            scheduleButton.trailingAnchor.constraint(equalTo: optionView.trailingAnchor),
+            scheduleButton.heightAnchor.constraint(equalToConstant: 75)
+            
+        ])
+    }
+    
     // MARK: - Configure Buttons section
     private func configureButtonSection() {
-        addButtonsStackViews()
+        view.addSubview(buttonStackView)
         buttonStackView.addArrangedSubview(cancelButton)
         buttonStackView.addArrangedSubview(createButton)
         updateCreateButtonState()
         makeButtonsStackViewConstraints()
     }
     
-    private func addButtonsStackViews() {
-        view.addSubview(buttonStackView)
-    }
-    
     private func makeButtonsStackViewConstraints() {
         NSLayoutConstraint.activate([
-            buttonStackView.centerXAnchor.constraint(equalTo: safeArea.centerXAnchor),
+            buttonStackView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             buttonStackView.widthAnchor.constraint(equalToConstant: buttonsStackViewWidth),
             buttonStackView.heightAnchor.constraint(equalToConstant: Resources.Dimensions.buttonHeight),
             buttonStackView.bottomAnchor.constraint(
@@ -356,33 +349,9 @@ final class CreateTrackerViewController: UIViewController {
     }
     
     private func updateCreateButtonState() {
-      createButton.backgroundColor = formIsFulfilled ? .YPBlack : .YPGray
-      createButton.isEnabled = formIsFulfilled ? true : false
+        createButton.backgroundColor = formIsFulfilled ? .YPBlack : .YPGray
+        createButton.isEnabled = formIsFulfilled
     }
-    
-    private func fetchSchedule(from schedule: [Bool]) {
-        self.schedule = schedule
-        let days = ["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс"]
-        let weekFull = [true, true, true, true, true, true, true]
-        let weekDays = [true, true, true, true, true, false, false]
-        let weekEnd = [false, false, false, false, false, true, true]
-        var finalSchedule: [String] = []
-        switch schedule {
-        case weekFull:
-            scheduleButton.configure(value: "Каждый день")
-        case weekDays:
-            scheduleButton.configure(value: "Будни")
-        case weekEnd:
-            scheduleButton.configure(value: "Выходные")
-        default:
-            for index in 0..<schedule.count where schedule[index] {
-              finalSchedule.append(days[index])
-            }
-            let finalScheduleJoined = finalSchedule.joined(separator: ", ")
-            scheduleButton.configure(value: finalScheduleJoined)
-          }
-          scheduleIsFulfilled = true
-        }
     
     @objc func cancelButtonClicked() {
         dismiss(animated: true)
@@ -400,7 +369,7 @@ final class CreateTrackerViewController: UIViewController {
     }
     
     @objc func scheduleButtonClicked() {
-        let scheduleVC = ScheduleViewController(schedule: schedule)
+        let scheduleVC = ScheduleViewController()
         scheduleVC.delegate = self
         present(scheduleVC, animated: true)
     }
@@ -442,14 +411,25 @@ extension CreateTrackerViewController: UITextFieldDelegate {
     func textFieldShouldEndEditing(_ textField: UITextField) -> Bool {
         true
     }
+    
+    func getScheduleShortNames(from schedule: [WeekDay]) -> String {
+        if schedule == WeekDay.allCases {
+            return "Каждый день"
+        }
+        if schedule == [.monday, .tuesday, .wednesday, .thursday, .friday] {
+            return "Будние дни"
+        }
+        return schedule
+            .map { $0.shortName }
+            .joined(separator: ", ")
+    }
 }
 
 extension CreateTrackerViewController: ScheduleViewControllerDelegate {
-    func scheduleViewController(_ viewController: ScheduleViewController, didSelectSchedule schedule: [Bool]) {
-        dismiss(animated: true) {
-            [weak self] in
-            guard let self else { return }
-            self.fetchSchedule(from: schedule)
-        }
+    func didSelectSchedule(_ schedule: [WeekDay]) {
+        scheduleButton.configure(value: getScheduleShortNames(from: schedule))
+        self.schedule = schedule
+        scheduleIsFulfilled = true
+        dismiss(animated: true)
     }
 }
