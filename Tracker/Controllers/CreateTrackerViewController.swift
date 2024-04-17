@@ -56,7 +56,7 @@ final class CreateTrackerViewController: UIViewController {
         textFieldWarning.font = Resources.Fonts.textField
         textFieldWarning.textAlignment = .center
         textFieldWarning.textColor = .YPRed
-        textFieldWarning.text = "Ограничение 38 символов"
+//        textFieldWarning.text = "Ограничение 38 символов"
         textFieldWarning.translatesAutoresizingMaskIntoConstraints = false
         textFieldWarning.frame = CGRect(
             x: 0,
@@ -345,7 +345,7 @@ final class CreateTrackerViewController: UIViewController {
     
     // MARK: - Private methods
     private func updateFormState() {
-        formIsFulfilled = trackerNameIsFulfilled && categoryIsSelected && scheduleIsFulfilled
+        formIsFulfilled = trackerNameIsFulfilled && categoryIsSelected && scheduleIsFulfilled 
     }
     
     private func updateCreateButtonState() {

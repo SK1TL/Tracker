@@ -51,19 +51,20 @@ final class TrackerViewController: UIViewController {
     private lazy var emptyView: EmptyView = {
         let emptyView = EmptyView()
         emptyView.translatesAutoresizingMaskIntoConstraints = false
+        emptyView.isHidden = true
         return emptyView
     }()
     
     private lazy var collectionView: UICollectionView = {
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewLayout())
+        collectionView.dataSource = self
+        collectionView.delegate = self
         collectionView.register(TrackerCell.self, forCellWithReuseIdentifier: cellID)
         collectionView.register(
             TrackerHeader.self,
             forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,
             withReuseIdentifier: headerID
         )
-        collectionView.dataSource = self
-        collectionView.delegate = self
         collectionView.backgroundColor = .YPWhite
         collectionView.translatesAutoresizingMaskIntoConstraints = false
         collectionView.scrollIndicatorInsets = UIEdgeInsets(
@@ -112,21 +113,23 @@ final class TrackerViewController: UIViewController {
         updateTrackerCollectionView()
     }
     
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        updateTrackerCollectionView()
-    }
-    
     private func updateTrackerCollectionView() {
-        collectionView.reloadData()
-        collectionView.collectionViewLayout.invalidateLayout()
-        collectionView.layoutSubviews()
+        if visibleCategories.isEmpty {
+            makeEmptyViewForTrackers()
+        } else {
+            collectionView.isHidden = false
+            emptyView.isHidden = true
+            DispatchQueue.main.async {
+                self.collectionView.reloadData()
+            }
+        }
     }
     
     private func fetchTracker(from tracker: Tracker, for categoryIndex: Int) {
         trackerFactory.addTracker(tracker, toCategory: categoryIndex)
-        fetchVisibleCategoriesFromFactory()
-        updateTrackerCollectionView()
+        searchInTrackers()
+//        fetchVisibleCategoriesFromFactory()
+//        updateTrackerCollectionView()
     }
     
     private func fetchVisibleCategoriesFromFactory() {
@@ -137,46 +140,62 @@ final class TrackerViewController: UIViewController {
         updateTrackerCollectionView()
     }
     
-    private func clearVisibleCategories() {
-        visibleCategories = []
+    private var calendar: Calendar = Calendar.current
+    
+    private var selectedWeekday: Int {
+        calendar.component(.weekday, from: datePicker.date)
     }
     
-//    1. Делим searchInTrackers на 2 метода (для поиска в searchBar и для переключения даты)
-//    2. При переключении даты
-    private func searchInTrackers(_ type: Search) {
-        let currentCategories = trackerFactory.categories
-        var newCategories: [TrackerCategory] = []
-        clearVisibleCategories()
-        for eachCategory in currentCategories {
-            var currentTrackers: [Tracker] = []
-            let trackers = eachCategory.items.count
-            for index in 0..<trackers {
-                let tracker = eachCategory.items[index]
-                switch type {
-                case .text:
-                    let tracker = eachCategory.items[index]
-                    if tracker.title.lowercased().contains(searchBarUserInput.lowercased()) {
-                        currentTrackers.append(tracker)
-                    }
-                case .weekDay:
-                    currentTrackers.append(tracker)
+    private func clearVisibleCategories() {
+//        visibleCategories = []
+    }
+    
+    private func searchInTrackers() {
+        visibleCategories = trackerFactory.categories.map { category in
+            let trackers = category.items.filter { tracker in
+                let scheduleContains = tracker.schedule.contains { day in
+                    return day.rawValue == selectedWeekday
                 }
+                return scheduleContains
             }
-            if !currentTrackers.isEmpty {
-                newCategories.append(
-                    TrackerCategory(
-                        id: eachCategory.id,
-                        name: eachCategory.name,
-                        items: currentTrackers
-                    )
-                )
-            }
+            return TrackerCategory(id: UUID(), name: category.name, items: trackers)
         }
-        visibleCategories = newCategories
-        if !visibleCategories.isEmpty {
-            makeEmptyViewForSearchBar()
+        .filter {
+            !$0.items.isEmpty
         }
+//        print("visibleCategories", visibleCategories)
         updateTrackerCollectionView()
+//        clearVisibleCategories()
+//        for eachCategory in currentCategories {
+//            var currentTrackers: [Tracker] = []
+//            let trackers = eachCategory.items.count
+//            for index in 0..<trackers {
+//                let tracker = eachCategory.items[index]
+//                switch type {
+//                case .text:
+//                    let tracker = eachCategory.items[index]
+//                    if tracker.title.lowercased().contains(searchBarUserInput.lowercased()) {
+//                        currentTrackers.append(tracker)
+//                    }
+//                case .weekDay:
+//                    currentTrackers.append(tracker)
+//                }
+//            }
+//            if !currentTrackers.isEmpty {
+//                newCategories.append(
+//                    TrackerCategory(
+//                        id: eachCategory.id,
+//                        name: eachCategory.name,
+//                        items: currentTrackers
+//                    )
+//                )
+//            }
+//        }
+//        visibleCategories = newCategories
+//        if !visibleCategories.isEmpty {
+//            makeEmptyViewForSearchBar()
+//        }
+//        updateTrackerCollectionView()
     }
     
     private func makeEmptyViewForTrackers() {
@@ -207,7 +226,7 @@ final class TrackerViewController: UIViewController {
     
     @objc private func datePickerValueChanged(_ sender: UIDatePicker) {
         currentDate = sender.date
-        searchInTrackers(.weekDay)
+        searchInTrackers()
         dismiss(animated: true)
     }
 }
@@ -275,8 +294,8 @@ extension TrackerViewController {
         NSLayoutConstraint.activate([
             collectionView.topAnchor.constraint(equalTo: safeArea.topAnchor),
             collectionView.bottomAnchor.constraint(equalTo: safeArea.bottomAnchor),
-            collectionView.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor),
-            collectionView.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor)
+            collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor)
         ])
     }
 }
@@ -286,28 +305,30 @@ extension TrackerViewController: UISearchBarDelegate {
         searchBarUserInput = searchText
         if searchBarUserInput.count > 2 {
             makeEmptyViewForSearchBar()
-            searchInTrackers(.text)
+            searchInTrackers()
         }
     }
     
     func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
         searchBar.text = nil
         searchBar.endEditing(true)
-        makeEmptyViewForTrackers()
         fetchVisibleCategoriesFromFactory()
     }
 }
 
 extension TrackerViewController: UICollectionViewDataSource {
     func numberOfSections(in collectionView: UICollectionView) -> Int {
+        print(visibleCategories.count)
         return visibleCategories.count
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return visibleCategories.isEmpty ? 0 : visibleCategories[section].items.count
+        print(visibleCategories[section].items.count)
+        return visibleCategories[section].items.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        
         guard
             let cell = collectionView.dequeueReusableCell(
                 withReuseIdentifier: cellID,
