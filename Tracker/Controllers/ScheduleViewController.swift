@@ -9,7 +9,7 @@ import Foundation
 import UIKit
 
 protocol ScheduleViewControllerDelegate: AnyObject {
-    func didSelectSchedule(_ schedule: [WeekDay])
+    func didSelectSchedule(_ schedule: [WeekDays])
 }
 
 final class ScheduleViewController: UIViewController {
@@ -77,7 +77,7 @@ final class ScheduleViewController: UIViewController {
     
     private lazy var selectedWeekDays: [Bool] = [Bool](repeating: false, count: weekDays.count)
     
-    private let weekDays = WeekDay.allCases
+    private let weekDays = WeekDays.allCases
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -160,7 +160,7 @@ final class ScheduleViewController: UIViewController {
     //MARK: - Action buttons configure
     
     @objc func doneButtonClicked() {
-        var result: [WeekDay] = []
+        var result: [WeekDays] = []
         for (index, val) in selectedWeekDays.enumerated() where val == true {
             result.append(weekDays[index])
         }

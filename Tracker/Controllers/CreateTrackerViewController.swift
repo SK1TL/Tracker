@@ -57,6 +57,7 @@ final class CreateTrackerViewController: UIViewController {
         textFieldWarning.textAlignment = .center
         textFieldWarning.textColor = .YPRed
 //        textFieldWarning.text = "Ограничение 38 символов"
+        textFieldWarning.isHidden = true
         textFieldWarning.translatesAutoresizingMaskIntoConstraints = false
         textFieldWarning.frame = CGRect(
             x: 0,
@@ -194,7 +195,7 @@ final class CreateTrackerViewController: UIViewController {
     private let factory = TrackersFactory.shared
     private var selectedCategoryIndex = 0
     private var isHabit: Bool
-    private var schedule = [WeekDay]()
+    private var schedule = [WeekDays]()
     private var userInput = "" {
         didSet {
             trackerNameIsFulfilled = true
@@ -383,9 +384,9 @@ final class CreateTrackerViewController: UIViewController {
 }
 
 extension CreateTrackerViewController: UITextFieldDelegate {
-    private func textField(
+    func textField(
         _ textField: UITextField,
-        shouldChangeCharectersIn range: NSRange,
+        shouldChangeCharactersIn range: NSRange,
         replacementString string: String
     ) -> Bool {
         userInput = textField.text ?? ""
@@ -412,8 +413,8 @@ extension CreateTrackerViewController: UITextFieldDelegate {
         true
     }
     
-    func getScheduleShortNames(from schedule: [WeekDay]) -> String {
-        if schedule == WeekDay.allCases {
+    func getScheduleShortNames(from schedule: [WeekDays]) -> String {
+        if schedule == WeekDays.allCases {
             return "Каждый день"
         }
         if schedule == [.monday, .tuesday, .wednesday, .thursday, .friday] {
@@ -426,7 +427,7 @@ extension CreateTrackerViewController: UITextFieldDelegate {
 }
 
 extension CreateTrackerViewController: ScheduleViewControllerDelegate {
-    func didSelectSchedule(_ schedule: [WeekDay]) {
+    func didSelectSchedule(_ schedule: [WeekDays]) {
         scheduleButton.configure(value: getScheduleShortNames(from: schedule))
         self.schedule = schedule
         scheduleIsFulfilled = true

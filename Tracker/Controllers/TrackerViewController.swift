@@ -165,37 +165,6 @@ final class TrackerViewController: UIViewController {
         }
 //        print("visibleCategories", visibleCategories)
         updateTrackerCollectionView()
-//        clearVisibleCategories()
-//        for eachCategory in currentCategories {
-//            var currentTrackers: [Tracker] = []
-//            let trackers = eachCategory.items.count
-//            for index in 0..<trackers {
-//                let tracker = eachCategory.items[index]
-//                switch type {
-//                case .text:
-//                    let tracker = eachCategory.items[index]
-//                    if tracker.title.lowercased().contains(searchBarUserInput.lowercased()) {
-//                        currentTrackers.append(tracker)
-//                    }
-//                case .weekDay:
-//                    currentTrackers.append(tracker)
-//                }
-//            }
-//            if !currentTrackers.isEmpty {
-//                newCategories.append(
-//                    TrackerCategory(
-//                        id: eachCategory.id,
-//                        name: eachCategory.name,
-//                        items: currentTrackers
-//                    )
-//                )
-//            }
-//        }
-//        visibleCategories = newCategories
-//        if !visibleCategories.isEmpty {
-//            makeEmptyViewForSearchBar()
-//        }
-//        updateTrackerCollectionView()
     }
     
     private func makeEmptyViewForTrackers() {
