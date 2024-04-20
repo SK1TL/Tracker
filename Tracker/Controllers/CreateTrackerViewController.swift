@@ -56,7 +56,7 @@ final class CreateTrackerViewController: UIViewController {
         textFieldWarning.font = Resources.Fonts.textField
         textFieldWarning.textAlignment = .center
         textFieldWarning.textColor = .YPRed
-        textFieldWarning.text = "Ограничение 38 символов"
+//        textFieldWarning.text = "Ограничение 38 символов"
         textFieldWarning.isHidden = true
         textFieldWarning.translatesAutoresizingMaskIntoConstraints = false
         textFieldWarning.frame = CGRect(
